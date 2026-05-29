@@ -33,7 +33,7 @@ type StoryToken =
   label: string;
   tone:
       | "portrait"
-      | "cap"
+      |"cap"
       | "orange"
       | "earth"
       | "audio"
@@ -442,13 +442,13 @@ function ScrollManifesto() {
 
   if (isMobile) {
     return (
-      <section ref={sectionRef} className="bg-[#f5f3ee] px-4 py-4 text-[#242424]">
-        <div className="mx-auto flex min-h-[100svh] w-full max-w-md flex-col gap-3">
+      <section ref={sectionRef} className="bg-[#f5f3ee] px-4 py-6 text-[#242424]">
+        <div className="mx-auto flex min-h-[100svh] w-full max-w-md flex-col gap-5">
            <motion.div
-             initial={{ opacity: 0, y: 20 }}
-             whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ amount: 0.7, once: false }}
-             transition={{ duration: 0.8 }}
+             initial={{ opacity: 0, y: 32, scale: 0.94 }}
+             whileInView={{ opacity: 1, y: 0, scale: 1 }}
+             viewport={{ amount: 0.5, once: false }}
+             transition={{ duration: 1.2, ease: "easeOut" }}
              className="rounded-[1.35rem] bg-[#242424] px-0 py-0 text-[#f5f3ee] shadow-[0_16px_40px_rgba(0,0,0,0.16)] overflow-hidden"
            >
              <video
@@ -462,19 +462,27 @@ function ScrollManifesto() {
              />
            </motion.div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {manifestoLines.map((line, index) => (
-                <motion.p
+                <motion.div
                   key={line.text}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 28 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ amount: 0.6, once: false }}
-                  transition={{ duration: 0.7, delay: index * 0.12 }}
-                  style={{ fontFamily: "var(--font-akt)" }}
-                  className="m-0 rounded-[1.25rem] bg-white/55 px-4 py-4 text-[clamp(1rem,5.2vw,1.6rem)] font-medium leading-[1.08] text-[#242424] shadow-[0_10px_28px_rgba(0,0,0,0.04)]"
+                  transition={{
+                    duration: 1,
+                    delay: index * 0.18,
+                    ease: [0.23, 1, 0.320, 1]
+                  }}
                 >
-                  {line.text}
-                </motion.p>
+                  <motion.p
+                    style={{ fontFamily: "var(--font-akt)" }}
+                    className="m-0 rounded-[1.25rem] bg-white/55 px-5 py-5 text-[clamp(1rem,5.2vw,1.6rem)] font-medium leading-[1.15] text-[#242424] shadow-[0_10px_28px_rgba(0,0,0,0.04)] backdrop-blur-sm hover:bg-white/70 transition-colors duration-300"
+                    whileHover={{ y: -2, scale: 1.01 }}
+                  >
+                    {line.text}
+                  </motion.p>
+                </motion.div>
             ))}
           </div>
         </div>
@@ -540,17 +548,177 @@ function ServiceCard({
   const opacity = useTransform(progress, [start, start + 0.08, 1], [0, 1, 1]);
   const y = useTransform(progress, [start, start + 0.08, 1], [36, 0, 0]);
   const scale = useTransform(progress, [start, start + 0.08, 1], [0.96, 1, 1]);
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <motion.article className="service-card" style={{ opacity, y, scale }}>
-      <div className="service-card-icon" aria-hidden="true">
-        <card.Icon size={38} strokeWidth={2.1} />
-      </div>
-      <h3>{card.title}</h3>
-      <p>{card.description}</p>
+    <motion.article
+      className="service-card"
+      style={{ opacity, y, scale }}
+      animate={{
+        y: isHovered ? -8 : 0,
+      }}
+      transition={{
+        duration: 0.3,
+        ease: "easeInOut"
+      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <motion.div
+        className="service-card-icon"
+        aria-hidden="true"
+        animate={{
+          rotate: isHovered ? 360 : 0,
+          scale: isHovered ? 1.15 : 1,
+        }}
+        transition={{
+          rotate: {
+            duration: 0.6,
+            ease: "easeInOut"
+          },
+          scale: {
+            duration: 0.3,
+            ease: "easeInOut"
+          }
+        }}
+      >
+        <motion.div
+          animate={{
+            y: [0, -6, 0],
+          }}
+          transition={{
+            duration: 2.5,
+            repeat: Infinity,
+            delay: index * 0.3,
+            ease: "easeInOut"
+          }}
+        >
+          <card.Icon size={38} strokeWidth={2.1} />
+        </motion.div>
+      </motion.div>
+      <motion.h3
+        animate={{
+          y: isHovered ? -4 : 0,
+        }}
+        transition={{
+          duration: 0.3,
+          ease: "easeInOut"
+        }}
+      >
+        {card.title}
+      </motion.h3>
+      <motion.p
+        animate={{
+          y: isHovered ? -2 : 0,
+        }}
+        transition={{
+          duration: 0.3,
+          ease: "easeInOut"
+        }}
+      >
+        {card.description}
+      </motion.p>
     </motion.article>
   );
 }
+
+function MobileServiceCard({
+  card,
+  index
+}: {
+  card: (typeof serviceCards)[number];
+  index: number;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 36, scale: 0.93 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ amount: 0.55, once: false }}
+      className="rounded-[1.35rem] border border-black/10 bg-[#faf9f6] px-5 py-5 shadow-[0_14px_34px_rgba(0,0,0,0.05)] overflow-hidden"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      animate={{
+        y: isHovered ? -8 : 0,
+      }}
+      transition={{
+        default: {
+          duration: 1.1,
+          delay: index * 0.22,
+          ease: [0.23, 1, 0.320, 1]
+        },
+        y: {
+          duration: 0.4,
+          ease: "easeInOut"
+        }
+      }}
+    >
+      <div className="flex items-start gap-5">
+        <motion.div
+          className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-[#ff5a00] to-[#ff8133] text-white shadow-[0_8px_24px_rgba(255,90,0,0.3)]"
+          animate={{
+            rotate: isHovered ? 360 : 0,
+            scale: isHovered ? 1.15 : 1,
+          }}
+          transition={{
+            rotate: {
+              duration: 0.7,
+              ease: "easeInOut"
+            },
+            scale: {
+              duration: 0.4,
+              ease: "easeInOut"
+            }
+          }}
+        >
+          <motion.div
+            animate={{
+              y: [0, -5, 0],
+            }}
+            transition={{
+              duration: 2.8,
+              repeat: Infinity,
+              delay: index * 0.35,
+              ease: "easeInOut"
+            }}
+          >
+            <card.Icon size={28} strokeWidth={2.1} />
+          </motion.div>
+        </motion.div>
+        <div className="min-w-0 flex-1">
+          <motion.h3
+            style={{ fontFamily: "var(--font-akt)" }}
+            className="m-0 text-[clamp(1.45rem,7vw,2rem)] font-medium leading-[1.02] tracking-[-0.03em] text-[#141414]"
+            animate={{
+              y: isHovered ? -4 : 0,
+            }}
+            transition={{
+              duration: 0.4,
+              ease: "easeInOut"
+            }}
+          >
+            {card.title}
+          </motion.h3>
+          <motion.p
+            className="mt-3 m-0 text-[clamp(0.95rem,4vw,1.06rem)] leading-[1.58] text-[#141414]/68"
+            animate={{
+              y: isHovered ? -2 : 0,
+            }}
+            transition={{
+              duration: 0.4,
+              ease: "easeInOut"
+            }}
+          >
+            {card.description}
+          </motion.p>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+
 
 function ScrollServices() {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -562,45 +730,25 @@ function ScrollServices() {
 
   if (isMobile) {
     return (
-      <section ref={sectionRef} className="bg-[#f8f7f3] px-4 py-4 text-[#141414]">
-        <div className="mx-auto flex min-h-[100svh] w-full max-w-md flex-col gap-3">
+      <section ref={sectionRef} className="bg-[#f8f7f3] px-4 py-6 text-[#141414]">
+        <div className="mx-auto flex min-h-[100svh] w-full max-w-md flex-col gap-4">
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ amount: 0.7, once: true }}
-            transition={{ duration: 0.4 }}
-            className="rounded-[1.25rem] px-1 py-1 font-[var(--font-akt)] text-[clamp(0.92rem,4vw,1rem)] uppercase tracking-[0.08em] text-[#7a756e]"
+            viewport={{ amount: 0.7, once: false }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
+            className="rounded-[1.25rem] px-2 py-2 font-[var(--font-akt)] text-[clamp(0.92rem,4vw,1rem)] uppercase tracking-[0.08em] text-[#7a756e]"
           >
-            Services
+            Our Services
           </motion.div>
 
-          {serviceCards.map((card, index) => (
-            <motion.article
-              key={card.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ amount: 0.55, once: true }}
-              transition={{ duration: 0.42, delay: index * 0.05 }}
-              className="rounded-[1.35rem] border border-black/10 bg-[#faf9f6] px-4 py-4 shadow-[0_14px_34px_rgba(0,0,0,0.05)]"
-            >
-              <div className="flex items-start gap-4">
-                <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#ff5a00] text-white">
-                  <card.Icon size={28} strokeWidth={2.1} />
-                </div>
-                <div className="min-w-0">
-                  <h3
-                    style={{ fontFamily: "var(--font-akt)" }}
-                    className="m-0 text-[clamp(1.45rem,7vw,2rem)] font-medium leading-[1.02] tracking-[-0.03em] text-[#141414]"
-                  >
-                    {card.title}
-                  </h3>
-                  <p className="mt-3 m-0 text-[clamp(0.95rem,4vw,1.06rem)] leading-[1.55] text-[#141414]/65">
-                    {card.description}
-                  </p>
-                </div>
-              </div>
-            </motion.article>
-          ))}
+           {serviceCards.map((card, index) => (
+             <MobileServiceCard
+               key={card.title}
+               card={card}
+               index={index}
+             />
+           ))}
         </div>
       </section>
     );
